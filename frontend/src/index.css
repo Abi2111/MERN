@@ -1,0 +1,236 @@
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+html {
+  font-size: 65.5%;
+}
+body {
+  font-family: 'Work Sans', sans-serif;
+}
+.app {
+  display: grid;
+  grid-row: 1fr 1fr 1fr 1fr;
+  align-items: center;
+}
+.header {
+  max-width: 100%;
+  height: 9vh;
+  padding: 0 10px;
+  border-bottom: 1px solid #2222222c;
+  display: flex;
+  align-items: center;
+  color: #fcc419;
+  justify-content: space-between;
+}
+.logo {
+  font-family: inherit;
+  position: relative;
+  border: 1px solid #fcc419;
+  outline: none;
+  background-color: transparent;
+  padding: 10px 20px;
+  border-radius: 30px;
+  z-index: 2;
+  cursor: pointer;
+  color: #222;
+  overflow: hidden;
+  text-align: center;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.logo::before {
+  content: '';
+  position: absolute;
+  top: 20%;
+  left: 20%;
+  transform: translate(-50%, -50%);
+  width: 40px;
+  height: 40px;
+  background-color: #fcc419;
+  filter: blur(5px);
+  z-index: -1;
+  transition: width 0.9s ease-out, height 0.9s ease-out,
+    background-color 0.3s ease-out;
+  border-radius: 50%;
+}
+
+.logo:hover::before {
+  border-radius: 20px;
+  width: 300px;
+  height: 200px;
+  background-color: #fcc419;
+}
+.nav-items {
+  display: flex;
+  list-style: none;
+  gap: 20px;
+}
+.nav-item {
+  text-decoration: none;
+  font-size: 19px;
+  font-weight: 500;
+}
+.nav-item .active {
+  border-bottom: 2px solid #725ac1;
+}
+.cartCount {
+  color: red;
+  padding: 0 10px;
+}
+/************************   FOOTER    *********************/
+/**********************************************************/
+.footer {
+  position: fixed;
+  width: 100%;
+  background: #fcc419;
+  padding: 10px;
+  color: #fff;
+  font-weight: 500;
+  letter-spacing: 2px;
+  text-align: center;
+  bottom: 0;
+}
+
+/******************** PRODUCTS *********************/
+/***************************************************/
+.product-container {
+  display: flex;
+  flex-wrap: wrap;
+  width: 100%;
+  justify-content: center;
+}
+.product-card {
+  display: grid;
+  grid-row: repeat(5, 1fr);
+  width: 300px;
+  border: 1px solid lightgray;
+  border-radius: 5px;
+  overflow: hidden;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+  margin: 20px;
+  background-color: white;
+  padding-bottom: 1%;
+  padding: 10px;
+}
+
+.product-image {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 10px;
+}
+
+.product-name {
+  color: #fcc419;
+  font-size: 1.8rem;
+  font-weight: bold;
+  margin: 10px 0;
+  text-align: center;
+}
+
+.product-description {
+  font-size: 1.3rem;
+  margin: 10px 0;
+  text-align: center;
+}
+
+.price {
+  font-size: 1.9rem;
+  font-weight: bold;
+  margin: 10px 0;
+  color: orange;
+}
+.product-rating {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.add-to-cart-button {
+  padding: 10px 20px;
+  background-color: orange;
+  border: none;
+  border-radius: 5px;
+  color: white;
+  font-size: 0.875rem;
+  cursor: pointer;
+}
+
+.add-to-cart-button:hover {
+  background-color: darkorange;
+}
+
+.product-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+.original-price {
+  text-decoration: line-through;
+  color: lightgray;
+  font-size: 0.875rem;
+}
+
+.discount-price {
+  color: orange;
+  font-size: 1.125rem;
+  font-weight: bold;
+}
+
+.cartBtn {
+  background: #fbca1f;
+  font-family: inherit;
+  padding: 0.6em 1.3em;
+  font-weight: 400;
+  font-size: 15px;
+  border: 3px solid black;
+  border-radius: 0.4em;
+  box-shadow: 0.1em 0.1em;
+  cursor: pointer;
+}
+
+.cartBtn:hover {
+  transform: translate(-0.05em, -0.05em);
+  box-shadow: 0.15em 0.15em;
+}
+
+.cartBtn:active {
+  transform: translate(0.05em, 0.05em);
+  box-shadow: 0.05em 0.05em;
+}
+
+.btn {
+  display: block;
+  width: 15%;
+  margin: 10px auto;
+  text-align: center;
+  padding: 17px 40px;
+  border-radius: 50px;
+  cursor: pointer;
+  border: 0;
+  background-color: white;
+  box-shadow: rgb(0 0 0 / 5%) 0 0 8px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  font-size: 15px;
+  transition: all 0.5s ease;
+}
+
+.btn:hover {
+  letter-spacing: 3px;
+  background-color: hsl(261deg 80% 48%);
+  color: hsl(0, 0%, 100%);
+  box-shadow: rgb(93 24 220) 0px 7px 29px 0px;
+}
+
+.btn:active {
+  letter-spacing: 3px;
+  background-color: hsl(261deg 80% 48%);
+  color: hsl(0, 0%, 100%);
+  box-shadow: rgb(93 24 220) 0px 0px 0px 0px;
+  transform: translateY(10px);
+  transition: 100ms;
+}
