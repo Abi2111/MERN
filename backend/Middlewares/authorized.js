@@ -13,6 +13,10 @@ exports.authenticated = async (req, res, next) => {
         req.user = await User.findById(decode.id);
         next();
       });
+    } else {
+      return res.status(400).json({
+        message: 'please login and try again',
+      });
     }
   } catch (error) {
     console.log(error);

@@ -34,6 +34,7 @@ exports.userRegister = async (req, res, next) => {
 
 exports.userLogin = async (req, res, next) => {
   try {
+    console.log(req.body);
     const { email, password } = req.body;
     if (!email || !password) {
       return next(new ErrorHandling('Please enter Email and password', 400));

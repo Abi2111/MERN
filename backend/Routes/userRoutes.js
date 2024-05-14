@@ -18,7 +18,7 @@ const {
   adminAuthorized,
 } = require('./../Middlewares/authorized');
 const UserRouter = express.Router();
-UserRouter.route('/login').get(userLogin);
+UserRouter.route('/login').post(userLogin);
 UserRouter.route('/signin').post(userRegister);
 UserRouter.route('/logout').get(userLogout);
 UserRouter.route('/profile').get(authenticated, userProfile);
