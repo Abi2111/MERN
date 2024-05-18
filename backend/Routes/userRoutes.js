@@ -12,6 +12,7 @@ const {
   adminDelete,
   adminUpdateProfile,
   userProfile,
+  uploadAvatar,
 } = require('../Controllers/UserController');
 const {
   authenticated,
@@ -24,7 +25,7 @@ UserRouter.route('/logout').get(userLogout);
 UserRouter.route('/profile').get(authenticated, userProfile);
 UserRouter.route('/update_password').put(authenticated, updatePassword);
 UserRouter.route('/reset_password/:token').put(resetpassword);
-UserRouter.route('/forgot_password').get(forgotPassword);
+UserRouter.route('/forgot_password').post(forgotPassword);
 UserRouter.route('/update_profile').put(authenticated, updateProfile);
 UserRouter.route('/allUser').get(
   authenticated,
@@ -42,4 +43,5 @@ UserRouter.route('/admin/update_profile/:id').get(
   adminAuthorized('admin'),
   adminUpdateProfile
 );
+UserRouter.route('/upload_avatar').post(authenticated, uploadAvatar);
 module.exports = UserRouter;

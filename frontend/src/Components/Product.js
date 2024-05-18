@@ -41,7 +41,6 @@ export default function Products() {
 
   // 3 send the params
   const { data, error, isLoading } = useGetProductsQuery(params);
-  console.log(data, error?.error);
   useEffect(() => {
     setProducts(data?.products);
   }, [data]);
@@ -59,7 +58,7 @@ export default function Products() {
       >
         <ul className="row row-cols-1 row-cols-xs-2 row-cols-sm-2 row-cols-lg-4 g-3">
           {products?.map(product => (
-            <ProductItem product={product} />
+            <ProductItem product={product} key={product.title} />
           ))}
         </ul>
         {products?.length > 5 ? (

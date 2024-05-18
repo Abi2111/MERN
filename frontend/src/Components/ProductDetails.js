@@ -3,21 +3,48 @@ import ProductLayout from '../Layouts/ProductLayout.js';
 import { useGetProductDetailsQuery } from '../redux/APIS/productApi.js';
 import Loader from './Loader.js';
 import { useEffect, useState } from 'react';
+import { useAddToCartMutation } from '../redux/APIS/cartApi.js';
+import { toast } from 'react-hot-toast';
+import { useDispatch, useSelector } from 'react-redux';
+import { setCartVal } from '../redux/slices/cartSlice.js';
 export default function ProductDetails() {
   const [product, setProduct] = useState({});
   const [poster, setPoster] = useState('');
+  const dipatch = useDispatch();
+  let { cartVal } = useSelector(state => state.cart);
+  console.log(cartVal);
 
   const params = useParams();
   const id = params?.id;
   const { data, error, isLoading } = useGetProductDetailsQuery(id);
+  const [
+    addToCart,
+    { data: cart, isSuccess, error: cartErr, isLoading: cartLoading },
+  ] = useAddToCartMutation();
+
+  console.log(cart);
   useEffect(() => {
+    if (error) {
+      toast.error(error?.data?.message);
+    }
+    if (isSuccess) {
+      toast.success('Successfully added to cart');
+    }
     setProduct(data?.product);
     setPoster(data?.product?.thumbnail);
-  }, [data]);
+  }, [data, cartErr, isSuccess]);
   if (isLoading) {
     return <Loader />;
   }
-  console.log(product);
+
+  async function handleOnClickCart() {
+    const cartDetails = {
+      id: product?._id,
+    };
+    const price = product?.price;
+    await addToCart({ cartDetails, price });
+    dipatch(setCartVal(1));
+  }
   return (
     <ProductLayout>
       <>
@@ -66,7 +93,9 @@ export default function ProductDetails() {
               <h4>{product?.brand}</h4>
               <h1>${product?.price}</h1>
               <p>{product?.description}</p>
-              <button>Add to Cart</button>
+              <button onClick={handleOnClickCart} disabled={cartLoading}>
+                {cartLoading ? 'Adding to cart' : 'Add to Cart'}
+              </button>
               <button>Wishlist</button>
             </div>
           </div>

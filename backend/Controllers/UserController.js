@@ -2,6 +2,8 @@ const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 const User = require('./../Models/UserModel');
 const sendMail = require('./../Utils/SendMail');
+const cloudinary = require('./../Cloudinary/Cloudinary');
+
 const getToken = id => {
   return jwt.sign({ id }, process.env.SECRET, {
     expiresIn: process.env.EXPIRESIN,
@@ -19,6 +21,10 @@ exports.userRegister = async (req, res, next) => {
     }
     const user = await User.create({ name, password, email });
     const token = getToken(user._id);
+    res.cookie('token', token, {
+      expiresIn: process.env.JWTEXPIRES,
+      httpOnly: true,
+    });
     res.status(201).json({
       message: 'Created Successfully',
       token,
@@ -34,7 +40,6 @@ exports.userRegister = async (req, res, next) => {
 
 exports.userLogin = async (req, res, next) => {
   try {
-    console.log(req.body);
     const { email, password } = req.body;
     if (!email || !password) {
       return next(new ErrorHandling('Please enter Email and password', 400));
@@ -44,7 +49,6 @@ exports.userLogin = async (req, res, next) => {
       return next(new ErrorHandling('Please enter valid Email', 401));
     }
     const correct = await user.comparePassword(password);
-    console.log(correct);
     if (!correct) {
       // return next(new ErrorHandling('Please enter valid Password', 401));
       return res.status(400).json({
@@ -52,7 +56,6 @@ exports.userLogin = async (req, res, next) => {
       });
     }
     const token = getToken(user._id);
-    console.log(token);
     res.cookie('token', token, {
       expiresIn: process.env.JWTEXPIRES,
       httpOnly: true,
@@ -71,10 +74,9 @@ exports.userLogin = async (req, res, next) => {
 
 exports.userLogout = async (req, res, next) => {
   try {
-    res.cookie('token', null, {
-      expires: new Date(Date.now()),
-      httpOnly: true,
-    });
+    console.log('requested');
+    res.cookie('token', '');
+    console.log(req.cookies.token);
     res.status(200).json({
       message: 'logout successfully',
     });
@@ -731,6 +733,8 @@ exports.resetpassword = async (req, res, next) => {
       message: 'Successfully password reset',
     });
   } catch (error) {
+    user.resetPasswordToken = undefined;
+    user.resetPasswordTokenExpire = undefined;
     res.status(400).json({
       message: 'try again',
       error: error.message,
@@ -906,6 +910,47 @@ exports.adminDelete = async (req, res, next) => {
     res.status(400).json({
       message: 'try again',
       error: error.message,
+    });
+  }
+};
+
+exports.uploadAvatar = async (req, res, next) => {
+  try {
+    const { image } = req.body;
+    console.log('requested');
+    const user = req?.user;
+    //upload_preset -> signed means we need authorzied key to upload image from admin // Unsigned means
+    // no need of key
+    const uploadImage = await cloudinary.uploader.upload(
+      image,
+      {
+        upload_preset: 'unsigned',
+        public_id: `${user?.name}avatar`,
+        allowed_formates: ['png', 'jpg', 'jpeg', 'svg', 'ico', 'jfif', 'webp'],
+      },
+      function (error, result) {
+        if (error) {
+          console.log(error);
+        }
+      }
+    );
+
+    const updateUser = await User.findById(req?.user?._id);
+
+    updateUser.avatar.url = uploadImage.url;
+    updateUser.avatar.public_id = uploadImage.public_id;
+    await updateUser.save({ validateBeforeSave: true });
+    console.log(updateUser);
+
+    res.status(200).json({
+      status: 'Successful',
+      message: 'Successfully uploaded',
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({
+      status: 'Unsuccessfull',
+      error,
     });
   }
 };

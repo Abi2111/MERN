@@ -44,7 +44,7 @@ export default function ProductItem({ product }) {
                 to={`/products/${product?._id}`}
                 className="btn-card btn-warning bold-btn text-center btn-cart"
               >
-                add to cart
+                View
               </Link>
             </div>
             <div className="clearfix mb-1">

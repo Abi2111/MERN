@@ -1,12 +1,28 @@
 import { useState } from 'react';
+import { useSelector } from 'react-redux';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
+import { useGetProfileQuery } from '../redux/APIS/userApi.js';
+import { useLazyLogoutQuery } from '../redux/APIS/authApi.js';
+import { useGetCartQuery } from '../redux/APIS/cartApi.js';
+
 export default function Header() {
+  const { user, isAuthenticated } = useSelector(state => state.user);
+  const { data } = useGetProfileQuery();
+  const { data: cartData, error } = useGetCartQuery();
+  let { cartVal } = useSelector(state => state.cart);
   const [search, setSearch] = useState('');
+  const [active, setActive] = useState(false);
+
   const navigate = useNavigate();
   function onSubmit(e) {
     e.preventDefault();
     if (!search || search === '') return;
     navigate(`/?search=${search}`);
+  }
+  const [logout] = useLazyLogoutQuery();
+  async function handleLogout() {
+    await logout();
+    navigate(0);
   }
   return (
     <div className="header">
@@ -50,20 +66,61 @@ export default function Header() {
             Products
           </NavLink>
         </li>
+
         <li>
-          <NavLink className="nav-item">
+          <NavLink className="nav-item" to="/category">
+            Category
+          </NavLink>
+        </li>
+        <li>
+          <NavLink className="nav-item" to="/cart">
             Cart
-            <span className="cartCount">0</span>
+            <span className="cartCount">{cartData?.cart?.totalQty}</span>
           </NavLink>
         </li>
-        <li>
-          <NavLink className="nav-item">Category</NavLink>
-        </li>
-        <li>
-          <NavLink className="nav-item" to="/login">
-            Login
-          </NavLink>
-        </li>
+        {isAuthenticated ? (
+          <div
+            className="dropdown-container"
+            onClick={() => setActive(crr => !crr)}
+          >
+            <div className="dropdown-profile ">
+              <img
+                src={`${
+                  user?.avatar?.url
+                    ? user?.avatar?.url
+                    : './images/default_avatar.jpg'
+                }`}
+                alt="profile"
+              />
+              <h4>Avinash</h4>
+              <ion-icon name="caret-down-outline"></ion-icon>
+            </div>
+            <div className={`dropdown-link ${active ? 'active' : ''}`}>
+              <ul>
+                <li>
+                  <Link to="/me/profile">Profile</Link>
+                </li>
+                <li>
+                  <Link to="/orders">My Orders</Link>
+                </li>
+                <li>
+                  <Link to="/cart">My Cart</Link>
+                </li>
+                <li>
+                  <Link to="/" onClick={handleLogout}>
+                    Log out
+                  </Link>
+                </li>
+              </ul>
+            </div>
+          </div>
+        ) : (
+          <li>
+            <NavLink className="nav-item" to="/login">
+              Login
+            </NavLink>
+          </li>
+        )}
       </ul>
     </div>
   );
