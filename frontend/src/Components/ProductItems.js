@@ -21,7 +21,7 @@ export default function ProductItem({ product }) {
           <div className="card-body">
             <div className="clearfix mb-3">
               <span className="float-start badge rounded-pill bg-success text-white ">
-                {product.price}$
+                ₹{product.price * 83}
               </span>
 
               <span className="float-end">

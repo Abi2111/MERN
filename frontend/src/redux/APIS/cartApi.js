@@ -3,7 +3,7 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 export const cartApi = createApi({
   reducerPath: 'cartApi',
   baseQuery: fetchBaseQuery({ baseUrl: '/api/v1' }),
-  tagTypes: ['cart'],
+  tagTypes: ['CART'],
   endpoints: builder => ({
     addToCart: builder.mutation({
       query: ({ cartDetails, price }) => ({
@@ -11,14 +11,14 @@ export const cartApi = createApi({
         method: 'POST',
         body: { cartDetails, price },
       }),
-      invalidatesTags: ['cart'],
+      invalidatesTags: ['CART'],
     }),
     getCart: builder.query({
       query: () => ({
         url: '/getCart',
         method: 'GET',
       }),
-      providesTags: ['cart'],
+      providesTags: ['CART'],
     }),
     updateQty: builder.mutation({
       query: body => ({
@@ -26,7 +26,7 @@ export const cartApi = createApi({
         method: 'PUT',
         body,
       }),
-      invalidatesTags: ['cart'],
+      invalidatesTags: ['CART'],
     }),
     deleteCart: builder.mutation({
       query: body => ({
@@ -34,7 +34,7 @@ export const cartApi = createApi({
         method: 'DELETE',
         body,
       }),
-      invalidatesTags: ['cart'],
+      invalidatesTags: ['CART'],
     }),
   }),
 });

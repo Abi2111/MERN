@@ -26,9 +26,12 @@ export default function Header() {
   }
   return (
     <div className="header">
-      <button className="logo">
-        <Link to="/">Martify</Link>
-      </button>
+      <div>
+        <Link to="/" className="logo">
+          <ion-icon name="cart-outline"></ion-icon> <span>C</span>art
+          <span>M</span>art
+        </Link>
+      </div>
 
       <div class="container-input">
         <form onSubmit={onSubmit}>
