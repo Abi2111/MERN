@@ -1,39 +1,22 @@
 const { findOne, findById } = require('../Models/UserModel');
 const Order = require('./../Models/OrderModel');
 const client = require('./../redisServer');
-const Product = require('./../Models/ProductModel');
-const Cart = require('./../Models/CartModel');
 exports.newOrder = async (req, res, next) => {
   try {
-    const user = req?.user?._id;
+    const user = req.user?._id;
     req.body.user = user;
     const newOrder = await Order.create(req.body);
     if (!newOrder) {
-      console.log('not created');
       return res.status(400).json({
         message: 'Please try again',
         status: 'Unsuccessful',
       });
     }
-    const cart = await Cart.findOne({ user: req?.user?._id });
-    newOrder.orderItems.forEach(async item => {
-      const index = cart.items.findIndex(items => items.item.equals(item.item));
-      if (index !== -1) {
-        cart.items.pop(index);
-        cart.totalPrice = 0;
-        cart.totalQty = 0;
-      }
-    });
-
-    await cart.save({ validateBeforeSave: true });
-
-    console.log('Success');
-    res.status(200).json({
+    res.status(201).json({
       status: 'Order placed successfully',
       order: newOrder,
     });
   } catch (error) {
-    console.log(error);
     res.status(400).json({
       message: error.message,
       error,
@@ -50,17 +33,9 @@ exports.getOrderDetails = async (req, res, next) => {
     const cachedOrder = await client.get(`orders:${id}`);
     if (cachedOrder) {
       const order = JSON.parse(cachedOrder);
-      const products = await Promise.all(
-        order?.orderItems.map(async item => {
-          return await Product.findById(item.item);
-        })
-      );
-
-      console.log(products);
       return res.status(200).json({
         status: 'Order details',
         order,
-        products,
       });
     }
 
@@ -75,18 +50,11 @@ exports.getOrderDetails = async (req, res, next) => {
 
     // Store in cache
     await client.set(`orders:${id}`, JSON.stringify(order));
-    const products = await Promise.all(
-      order?.orderItems.map(async item => {
-        return await Product.findById(item.item);
-      })
-    );
 
-    console.log(products);
     // Respond with order details
     res.status(200).json({
       status: 'Order details',
       order,
-      products,
     });
   } catch (error) {
     res.status(500).json({
@@ -98,8 +66,7 @@ exports.getOrderDetails = async (req, res, next) => {
 
 exports.getUserOrders = async (req, res, next) => {
   try {
-    const order = await Order.find({ user: req?.user?._id });
-    console.log(order);
+    const order = await Order.find({ user: req?.user?._id.valueOf() });
     if (!order) {
       return res.status(400).json({
         message: 'Please try again',

@@ -42,17 +42,16 @@ exports.addToCart = async (req, res, next) => {
       );
       if (findIndex !== -1) {
         cart.items[findIndex].qty += 1;
-        cart.totalPrice += price * 83;
       } else {
         cart.items.push({ item: cartDetails.id, qty: 1 });
-        cart.totalPrice += price * 83;
-        cart.totalQty += 1;
       }
+      cart.totalPrice += price;
+      cart.totalQty += 1;
     } else {
       cart = new Cart({
         user: req?.user?._id,
         items: { item: cartDetails.id, qty: 1 },
-        totalPrice: price * 83,
+        totalPrice: price,
         totalQty: 1,
       });
     }
@@ -75,8 +74,6 @@ exports.addToCart = async (req, res, next) => {
 exports.updateCart = async (req, res, next) => {
   try {
     const cart = await Cart.findOne({ user: req?.user });
-    const product = await Product.findById(req?.body?.product_id);
-
     if (!cart) {
       return res.status(400).json({
         status: 'Unsuccessful',
@@ -90,13 +87,11 @@ exports.updateCart = async (req, res, next) => {
       console.log(cart.items[findIndex].qty);
       if (findIndex !== -1) {
         cart.items[findIndex].qty += 1;
-        cart.totalPrice += product.price * 83;
       }
     } else {
       if (cart.items[findIndex].qty <= 1) return;
       if (findIndex !== -1) {
         cart.items[findIndex].qty -= 1;
-        cart.totalPrice -= product.price * 83;
       }
     }
     await cart.save();
@@ -115,9 +110,7 @@ exports.updateCart = async (req, res, next) => {
 
 exports.deleteCart = async (req, res, next) => {
   try {
-    console.log(req?.body?.product_id);
     const cart = await Cart.findOne({ user: req?.user?._id });
-    const product = await Product.findById(req?.body?.product_id);
     if (!cart) {
       return res.status(400).json({
         status: 'Unsuccessful',
@@ -126,22 +119,13 @@ exports.deleteCart = async (req, res, next) => {
     }
 
     if (cart) {
-      if (cart.totalQty <= 0) return;
       const findIndex = cart.items.findIndex(ele =>
         ele.item.equals(req?.body?.product_id)
       );
       if (findIndex !== -1) {
-        const removedItem = cart.items[findIndex];
-        cart.totalQty -= 1;
-        cart.totalPrice -= product?.price * 83 * removedItem.qty;
-        cart.items.splice(findIndex, 1);
-        console.log(findIndex);
-      } else {
-        return res.status(400).json({
-          status: 'Unsuccessful',
-          message: 'Item not found in cart',
-        });
+        cart.items.pop(findIndex);
       }
+      cart.totalQty -= 1;
     }
     await cart.save({ validateBeforeSave: true });
     res.status(200).json({
@@ -151,7 +135,7 @@ exports.deleteCart = async (req, res, next) => {
   } catch (error) {
     res.status(400).json({
       status: 'Unsuccessful',
-      error: error.message,
+      error,
     });
   }
 };

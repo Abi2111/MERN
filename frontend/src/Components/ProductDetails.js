@@ -1,9 +1,4 @@
-import {
-  Link,
-  useNavigate,
-  useParams,
-  useSearchParams,
-} from 'react-router-dom';
+import { Link, useParams, useSearchParams } from 'react-router-dom';
 import ProductLayout from '../Layouts/ProductLayout.js';
 import { useGetProductDetailsQuery } from '../redux/APIS/productApi.js';
 import Loader from './Loader.js';
@@ -16,8 +11,8 @@ export default function ProductDetails() {
   const [product, setProduct] = useState({});
   const [poster, setPoster] = useState('');
   const dipatch = useDispatch();
-  const { isAuthenticated } = useSelector(state => state.user);
-  const navigate = useNavigate();
+  let { cartVal } = useSelector(state => state.cart);
+  console.log(cartVal);
 
   const params = useParams();
   const id = params?.id;
@@ -43,9 +38,6 @@ export default function ProductDetails() {
   }
 
   async function handleOnClickCart() {
-    if (!isAuthenticated) {
-      navigate('/login');
-    }
     const cartDetails = {
       id: product?._id,
     };
@@ -89,7 +81,7 @@ export default function ProductDetails() {
             <div className="product-photo">
               <img src={poster} alt="poster" />
               <ul className="product-photo-gallery">
-                {product?.images?.map(image => (
+                {product?.images.map(image => (
                   <li onClick={e => setPoster(e.target.src)}>
                     <img src={image} alt="img" />
                   </li>
@@ -99,7 +91,7 @@ export default function ProductDetails() {
             <div className="product-description">
               <h2>{product?.title}</h2>
               <h4>{product?.brand}</h4>
-              <h1>₹{product?.price * 83}</h1>
+              <h1>${product?.price}</h1>
               <p>{product?.description}</p>
               <button onClick={handleOnClickCart} disabled={cartLoading}>
                 {cartLoading ? 'Adding to cart' : 'Add to Cart'}

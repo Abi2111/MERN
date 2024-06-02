@@ -30,8 +30,27 @@ const orderSchema = new mongoose.Schema(
     },
     orderItems: [
       {
-        item: mongoose.Schema.Types.ObjectId,
-        qty: Number,
+        title: {
+          type: String,
+          required: true,
+        },
+        quantity: {
+          type: String,
+          required: true,
+        },
+        image: {
+          type: String,
+          required: true,
+        },
+        price: {
+          type: String,
+          required: true,
+        },
+        product: {
+          type: mongoose.Schema.Types.ObjectId,
+          required: true,
+          ref: 'Product',
+        },
       },
     ],
     paymentMethod: {
@@ -47,6 +66,10 @@ const orderSchema = new mongoose.Schema(
       status: String,
     },
     itemsPrice: {
+      type: Number,
+      required: true,
+    },
+    taxAmount: {
       type: Number,
       required: true,
     },
