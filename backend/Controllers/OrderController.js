@@ -1,6 +1,5 @@
 const { findOne, findById } = require('../Models/UserModel');
 const Order = require('./../Models/OrderModel');
-const client = require('./../redisServer');
 exports.newOrder = async (req, res, next) => {
   try {
     const user = req.user?._id;

@@ -9,7 +9,6 @@ const cartRouter = require('./Routes/cartRoutes');
 const dotEnv = require('dotenv');
 dotEnv.config({ path: './../config.env' });
 
-require('./redisServer');
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 process.on('uncaughtException', err => {
